@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'model/piece.dart';
-import 'model/grid.dart';
 import 'widget/game.dart';
+
 void main() {
   runApp(const MainApp());
 }
