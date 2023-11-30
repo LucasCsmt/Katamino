@@ -25,6 +25,10 @@ class Path{
     return _coords.length;
   }
 
+  List<StdCoords> getCoordsList(){
+    return _coords;
+  }
+
   // COMMANDES :
   /// Ajoute des coordonnées au chemin
   /// ### post-conditions

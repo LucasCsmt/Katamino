@@ -28,7 +28,7 @@ class StdCoords extends ICoords {
   }
 
   @override
-  ICoords getRelative(ICoords c){
+  StdCoords getRelative(ICoords c){
     return StdCoords.fromInt(getXCoords() - c.getXCoords(), getYCoords() - c.getYCoords());
   }
 
