@@ -311,7 +311,7 @@ class GameState extends State<Game> {
   }
 
   bool checkWinCondition(){
-    return _g.getNbCols() == nbPiecePlaced();
+    return _g.getNbRows() == nbPiecePlaced();
   }
 
 
