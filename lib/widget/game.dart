@@ -99,8 +99,7 @@ class GameState extends State<Game> {
      //notamment du (9:19.5) comme sur les téléphones récents 
      //(exemple: iPhone 15 Pro Max avec 430 x 932 de résolution)
       double width = MediaQuery.of(context).size.width;
-      double height = MediaQuery.of(context).size.height; 
-      print("width : $width , height : $height");
+      double height = MediaQuery.of(context).size.height;
       //la ligne suivante est un calcul de la hauteur optimal de la grille selon le nombre de pièces pour un écran en (9:19.5)
       //dans le meilleur des cas la hauteur de la grille fait 25%, 30% ou bien 35% de la hauteur de l'écran
       //ce cas n'arrivera presque jamais car le meilleur des cas est illusoire et la vie est faite d'imprévus
@@ -108,7 +107,6 @@ class GameState extends State<Game> {
       double freeHeight = height * 0.9 - gridHeight;
       //on initialise la taille des carrés en fonction de la taille de la grille
       squareSize = gridHeight ~/ (_pieces.length);
-      print("first squareSize : $squareSize");
       int nbPieceOnLine = (width) ~/ (squareSize * 5.1);
       int nbMaxLines = freeHeight ~/ (squareSize * 5.1);
       if(nbMaxLines == 0){
