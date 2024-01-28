@@ -50,18 +50,18 @@ class Score {
 class GameState extends State<Game> {
   GlobalKey key = GlobalKey();
   final List<Piece> _pieces = [
-    Piece.lshape(), 
+    //Piece.lshape(), 
     Piece.nshape(),
-    Piece.ishape(),
+    //Piece.ishape(),
     Piece.vshape(),
-    Piece.fshape(),
+    //Piece.fshape(),
     Piece.tshape(),
-    Piece.ushape(),
-    Piece.wshape(),
-    Piece.xshape(),
+    //Piece.ushape(),
+    //Piece.wshape(),
+    //Piece.xshape(),
     Piece.yshape(),
-    Piece.pshape(),
-    Piece.zshape(),
+    //Piece.pshape(),
+    //Piece.zshape(),
   ];
   late final Grid _g;
   final Map<Piece,List<MutableOffset>> _offsetmap = {};
@@ -319,26 +319,27 @@ class GameState extends State<Game> {
         children.addAll(
             [
              Positioned(
-              left: position.dx,
+              left: 0,
               top: position.dy,
               child :
                 ColoredBox(
                   color: Colors.blue,
                   child: SizedBox(
-                          width: _g.getNbCols() * squareSize.toDouble(),
+                          width: MediaQuery.of(context).size.width,
                           height: _g.getNbRows() * squareSize.toDouble(),
                           child: 
-                            Text("Vous avez gagné !\nVotre score est de : ${_score.getScore()} points !",
-                              style: const TextStyle(fontSize: 20),
+                            Text("${"".padRight(_g.getNbRows()~/2 - 1,'\n')}Vous avez gagné !\nVotre score est de : ${_score.getScore()} points !",
+                              style: TextStyle(fontSize: MediaQuery.of(context).size.width * (4/100)),
                               textAlign: TextAlign.center,
+                              
                             )
                         ),
                  ),
               ),
               //on ajoute le bouton de reset
-              Positioned(
-                left: position.dx + (2 * squareSize),
-                top: position.dy + (_g.getNbRows() * squareSize) / 2,
+              Positioned(//en flutter un floatingActionButton à une taille de 56 par 56
+                left: MediaQuery.of(context).size.width * (50/100) - 28,
+                top: MediaQuery.of(context).size.height * (50/100) - 28,
                 child :
                   FloatingActionButton(
                     onPressed: (){
