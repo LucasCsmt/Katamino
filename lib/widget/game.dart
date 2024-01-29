@@ -198,6 +198,7 @@ class GameState extends State<Game> {
           width : _g.getNbCols() * squareSize.toDouble(),
           height : _g.getNbRows() * squareSize.toDouble(),
           child : GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
             itemCount : _g.getNbRows() * _g.getNbCols(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _g.getNbCols(),
