@@ -12,6 +12,9 @@ void main() {
     .then((_) {
       runApp(MainApp());
     });
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -19,17 +22,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: <String, WidgetBuilder>{
-        '/': (context) => Accueil(),
-        '/gamemodeMenu': (context) => GameModeMenu(),
-        '/level': (context) => Level(),
-        '/regles' : (context) => Regles(),
-        '/endless' : (context) => Game(),
-      },
-      debugShowCheckedModeBanner: false,
-    );
+    return 
+      MaterialApp(
+        initialRoute: '/',
+        routes: <String, WidgetBuilder>{
+          '/': (context) => Accueil(),
+          '/gamemodeMenu': (context) => GameModeMenu(),
+          '/level': (context) => Level(),
+          '/regles' : (context) => Regles(),
+          '/endless' : (context) => Game(),
+        },
+        debugShowCheckedModeBanner: false,
+      );
   }
 }
 
