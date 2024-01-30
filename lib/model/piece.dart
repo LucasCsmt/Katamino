@@ -11,6 +11,7 @@ class Piece {
   final int _ordinal;
   final int _coordC;
   int _rotateState;
+  int _flipState;
 
   static final List<MaterialColor> colors = [
     Colors.red,
@@ -32,7 +33,9 @@ class Piece {
         _center = center,
         _ordinal = pieceNum,
         _coordC = 0,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
+        
 
   Piece.lshape()
       : _path = pa.Path([
@@ -47,7 +50,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 0,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.ushape()
       : _path = pa.Path([
@@ -62,7 +66,8 @@ class Piece {
         ),
         _coordC = 1,
         _ordinal = 1,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.fshape()
       : _path = pa.Path([
@@ -77,7 +82,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 2,
-        _rotateState = 0;  
+        _rotateState = 0,  
+        _flipState = 0;
 
   Piece.ishape()
       : _path = pa.Path([
@@ -92,7 +98,8 @@ class Piece {
         ),
         _coordC = 2,
         _ordinal = 3,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.nshape()//IMPORTANT METTRE 2,2
       : _path = pa.Path([
@@ -107,7 +114,8 @@ class Piece {
         ),
         _coordC = 1,
         _ordinal = 4,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.pshape()
       : _path = pa.Path([
@@ -122,7 +130,8 @@ class Piece {
         ),
         _coordC = 4,
         _ordinal = 5,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.tshape()
       : _path = pa.Path([
@@ -137,7 +146,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 6,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.vshape()
       : _path = pa.Path([
@@ -152,7 +162,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 7,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.wshape()
       : _path = pa.Path([
@@ -167,7 +178,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 8,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.xshape()
       : _path = pa.Path([
@@ -182,7 +194,8 @@ class Piece {
         ),
         _coordC = 2,
         _ordinal = 9,
-        _rotateState = 0;       
+        _rotateState = 0,
+        _flipState = 0;       
 
   Piece.yshape()
       : _path = pa.Path([
@@ -197,7 +210,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 10,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   Piece.zshape()
       : _path = pa.Path([
@@ -212,7 +226,8 @@ class Piece {
         ),
         _coordC = 3,
         _ordinal = 11,
-        _rotateState = 0;
+        _rotateState = 0,
+        _flipState = 0;
 
   
 
@@ -243,6 +258,9 @@ class Piece {
     return _rotateState;
   }
 
+  int getFlipState(){
+    return _flipState;
+  }
   // COMMANDES
 
   void setRotateState(int rotateState) {
@@ -256,10 +274,15 @@ class Piece {
     }
   }
 
+  void setFlipState(int flipState){
+    _flipState = flipState;
+  }
+
   void flip() {
     for (int i = 0; i < _path.getPathLength(); i++) {
         _path.getCoords(i).flipCoords(_center);
     }
+    _flipState = (_flipState + 1) % 2;
   }
 
   Offset centerDragAnchorStrategy(Draggable<Object> d, BuildContext context, Offset position) {
@@ -272,10 +295,9 @@ class PiecePainter extends CustomPainter {
   final Piece _piece;
   final Color _color;
   List<MutableOffset> _offsets = [];
-  MutableOffset _off = MutableOffset(const Offset(0, 0));
   PiecePainter(this._piece, this._color);
 
-  PiecePainter.good(this._piece, this._color, this._offsets, this._off);
+  PiecePainter.good(this._piece, this._color, this._offsets);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -351,5 +373,4 @@ class PiecePainter extends CustomPainter {
     return true;
   }
 }
-
 

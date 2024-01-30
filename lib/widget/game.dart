@@ -1,9 +1,12 @@
+
 import '../model/piece.dart';
+import '../util/move.dart';
 import '../util/std_coords.dart';
 import '../model/grid.dart';
 import 'package:flutter/material.dart';
 
 class Game extends StatefulWidget {
+
   const Game({super.key});
   @override
   State<Game> createState() => GameState();
@@ -47,20 +50,21 @@ class Score {
 class GameState extends State<Game> {
   GlobalKey key = GlobalKey();
   final List<Piece> _pieces = [
-    Piece.lshape(), 
-    Piece.nshape(),
-    Piece.ishape(),
-    Piece.vshape(),
     Piece.fshape(),
+    Piece.ishape(),
+    Piece.lshape(),
+    Piece.nshape(),
+    Piece.pshape(), 
     Piece.tshape(),
     Piece.ushape(),
+    Piece.vshape(),
     Piece.wshape(),
     Piece.xshape(),
     Piece.yshape(),
-    Piece.pshape(),
     Piece.zshape(),
   ];
   late final Grid _g;
+  final List<Move> _stack = [];
   final Map<Piece,List<MutableOffset>> _offsetmap = {};
   final Map<Piece, List<MutableOffset>> _baseOffsetMap = {};
   final Offset _feedbackOffset = Offset.zero;
@@ -143,6 +147,7 @@ class GameState extends State<Game> {
       if (!_g.pieceAlreadyPlaced(p)) {
         _g.putPiece(p, c);
       }
+      
     });
   }
 
@@ -169,6 +174,7 @@ class GameState extends State<Game> {
       updateOffsetPiece(_baseOffsetMap[p]![p.getCoordC()], _baseOffsetMap[p]!, c2);
 
       p.rotate();
+      _stack.add(Move(StdCoords.fromInt(-1, -1), p, p.getRotateState(), p.getFlipState(), 2));
     });
   }
   
@@ -187,16 +193,17 @@ class GameState extends State<Game> {
       updateOffsetPiece(_baseOffsetMap[p]![p.getCoordC()], _baseOffsetMap[p]!, c2);
 
       p.flip();
+      _stack.add(Move(StdCoords.fromInt(-1, -1), p, p.getRotateState(), p.getFlipState(), 3));
     });
   }
 
   Future<Widget> _renderGrid() async{
       return SizedBox(
           key : key,
-          width : _g.getNbCols() * (squareSize.toDouble() + 0.5),
-          height : _g.getNbRows() * (squareSize.toDouble() + 0.5),
+          width : _g.getNbCols() * squareSize.toDouble(),
+          height : _g.getNbRows() * squareSize.toDouble(),
           child : GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             itemCount : _g.getNbRows() * _g.getNbCols(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _g.getNbCols(),
@@ -229,8 +236,10 @@ class GameState extends State<Game> {
                   return _g.isValid(data as Piece, StdCoords.fromList([i, j]));
                 },
                 onAccept: (data){
-                  _addPiece(data, StdCoords.fromInt(i, j));                   
-                                  
+                  Piece p = data;
+                  StdCoords c = StdCoords.fromList([i, j]);
+                  _addPiece(p, c);                   
+                  _stack.add(Move(c,p,p.getRotateState(), p.getFlipState(),0));       
                 }
               );
             },
@@ -239,61 +248,51 @@ class GameState extends State<Game> {
   }
 
   List<Widget> createChildren(List<Piece> pieces){
-    List<Widget> children = [
-      Scaffold(
-        appBar: AppBar(
-          title: const Text("Jeu")
-        ),
-        body: 
-        SafeArea(
-          top : true,
-          bottom: true,
-          child :
-          FutureBuilder(
-            future : _renderGrid(),
-            builder: (context, snapshot){
-              if(snapshot.hasData){
-                return Center(
-                  child: Column(
-                    children: [
-                      ColoredBox(
-                        color: Colors.red,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 4.0),
-                          child: Text(
-                            "Game",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
+    List<Widget> children = [Scaffold(
+        body: FutureBuilder(
+          future : _renderGrid(),
+          builder: (context, snapshot){
+            if(snapshot.hasData){
+              return Center(
+                child: Column(
+                  children: [
+                    const ColoredBox(
+                      color: Colors.red,
+                      child: Padding(
+                        padding:  EdgeInsets.only(bottom: 4.0),
+                        child: Text(
+                          "Game",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
                           ),
-                        )
-                      ),
-                      Container(
-                        child: SizedBox(
-                          width: _g.getNbCols() * squareSize.toDouble(),
-                          child: snapshot.data as Widget,
                         ),
-                      ),
-                    ],
-                  )
-                );
-              } else {
-                return Center(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.inversePrimary,
+                      )
+                    ),
+                    Container(
+                      child: SizedBox(
+                        width: _g.getNbCols() * squareSize.toDouble(),
+                        child: snapshot.data as Widget,
                       ),
                     ),
+                  ],
+                )
+              );
+            } else {
+              return Center(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
                   ),
-                );
-              }
+                ),
+              );
             }
-          ),
-        )
-      ),
+          }
+        ),
+      ),   
     ];
     return children;
   }
@@ -315,8 +314,7 @@ class GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
-    print("width: ${MediaQuery.of(context).size.width}");
-    print(MediaQuery.of(context).size.height);
+
     List<Widget> children = createChildren(_pieces);
     children.addAll(createDraggablePieces());
     children.add(Positioned(
@@ -331,6 +329,10 @@ class GameState extends State<Game> {
                   )
               ));
     if(checkWinCondition()){
+        print("récap aprés win");
+        for(Move m in _stack){
+          print(m.getType() + " " + m.getPiece().toString() + " coords:" + m.getCoords().toString() + " rotation:" + m.getRotation().toString() + " flip:" + m.getFlip().toString());
+        }
         //on return le widget de la win
         Offset position = (key.currentContext?.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
         children.addAll(
@@ -426,11 +428,15 @@ class GameState extends State<Game> {
               feedbackOffset: _feedbackOffset,
               feedback: CustomPaint(
                 size: Size((5 * squareSize).toDouble() , (5 * squareSize).toDouble()),
-                painter: PiecePainter.good(p, Colors.grey, _offsetmap[p]!, off),
+                painter: PiecePainter.good(p, Colors.grey, _offsetmap[p]!),
               ),
               onDragStarted: () {
                 _currPiece = p;
-                _remove(p, const Offset(0,0));
+                if(_g.pieceAlreadyPlaced(p)){
+                  StdCoords c = _g.getCoordsOfPiece(p);
+                  _remove(p, const Offset(0,0));
+                  _stack.add(Move(c,p, p.getRotateState(), p.getFlipState(), 1));
+                }
               },
               onDraggableCanceled: (velocity, offset) {
                 setState(() {
@@ -450,7 +456,6 @@ class GameState extends State<Game> {
                   int y = c.getXCoords();
                 
                   Offset sub = off.getOffset() - _offsetmap[p]![p.getCoordC()].getOffset();
-                  print(position);
                   Offset ret = Offset(position.dx + (x * squareSize) + sub.dx, position.dy + (y * squareSize) + sub.dy);
                   updateOffsetPiece(off, _offsetmap[p]!, ret);
                 });
